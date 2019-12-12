@@ -1,15 +1,27 @@
 ## Getting started
 
-`npm install`
+Install dependencies
+```
+npm install
+```
+
+Run migrations
+```
+npx sequelize db:migrate
+```
 
 Copy and fill out `.env` file
-
 ```
 cp .env.sample .env
 ```
 
-`npm run dev`
+Run development server
+```
+npm run dev
+```
 
 ## Tunnel to localhost
 
-`npx ngrok http 8080`
+```
+npx ngrok http 8080
+```
