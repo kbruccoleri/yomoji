@@ -10,7 +10,7 @@ app.post('/', (req, res) => {
     const { challenge, event } = req.body
 
     if (challenge) {
-        res.send({
+        return res.send({
             challenge
         })
     } else {
@@ -25,7 +25,13 @@ app.post('/', (req, res) => {
     }
 
     if (event.type === 'message' && event.subtype !== 'bot_message') {
+        // if edit, previous message event.message
+        const { user } = event
+
+
         if (!event.text.includes(':taco:')) return
+
+        const results = parseBlocks(event.blocks)
 
         postToSlack({
             text: event.text,
@@ -54,6 +60,36 @@ const postToSlack = async ({
     const json = await res.json()
 
     console.log('SLACK RESPONSE:', json)
+}
+
+const parseBlocks = ([ blocks ]) => {
+    let nextblocks = blocks
+    while (nextblocks.type !== 'rich_text_section') {
+        nextblocks = nextblocks.elements[0]
+    }
+
+    const { elements } = nextblocks
+    let recipient
+
+    const blockObj = elements.reduce((memo, curr) => {
+        const { type, user_id, name } = curr
+
+        if (type === 'user') {
+            memo.user = ++memo.user || 1
+            recipient = user_id
+        } else if (type === 'emoji' && name === 'taco') {
+            memo.emoji = ++memo.emoji || 1
+        }
+
+        return memo
+    }, {})
+
+    if (blockObj.user !== 1) return null
+
+    return {
+        recipient,
+        count: blockObj.emoji
+    }
 }
 
 const checkUser = async user => {
