@@ -7,7 +7,7 @@ npm install
 
 Run migrations
 ```
-npx sequelize db:migrate
+npx knex migrate:latest
 ```
 
 Copy and fill out `.env` file
