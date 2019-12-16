@@ -6,8 +6,8 @@ exports.up = function(knex) {
       }),
       knex.schema.createTable('user_event', function(table) {
         table.increments('id').primary();
-        table.integer('from_id').references('users.id');
-        table.integer('to_id').references('users.id');
+        table.integer('from_id').references('user.id');
+        table.integer('to_id').references('user.id');
         table.integer('event_id').references('event.id');
       }),
       knex.schema.createTable('event', function(table) {

@@ -4,7 +4,7 @@ const User = knex => ({
     let [user] = await knex('user').where(userObject)
 
     if (!user) {
-      user = await knex('user').insert(userObject)
+      [user] = await knex('user').insert(userObject, ['id'])
     }
     return user
   },

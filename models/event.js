@@ -4,7 +4,7 @@ const Event = knex => ({
     let [event] = await knex('event').where(eventObject)
 
     if (!event) {
-      evwnt = await knex('event').insert(eventObject)
+      [event] = await knex('event').insert(eventObject, ['id'])
     }
     return event
   },
