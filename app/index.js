@@ -1,12 +1,13 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const fetch = require('node-fetch')
+const UserEvent = require('../models')
 
 const app = express()
 
 app.use(bodyParser.json())
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
     const { challenge, event } = req.body
 
     if (challenge) {
@@ -17,8 +18,9 @@ app.post('/', (req, res) => {
         res.sendStatus(200)
     }
 
+    // user mentions bot handle this
     if (event.type === 'app_mention') {
-        postToSlack({
+        return postToSlack({
             text: 'I am a bot',
             channel: event.channel
         })
@@ -33,8 +35,18 @@ app.post('/', (req, res) => {
 
         const results = parseBlocks(event.blocks)
 
+        if (!results) return
+
+        const { recipient, count } = results
+
+        await UserEvent.create({
+            to: recipient,
+            from: user,
+            type: 'taco'
+        })
+
         postToSlack({
-            text: event.text,
+            text: `<@${user}> gave <@${recipient}> ${count}`,
             channel: event.channel
         })
     }
@@ -102,4 +114,28 @@ const checkUser = async user => {
     const json = await res.json()
 
     console.log('SLACK RESPONSE:', json)
+}
+
+const createLeaderBoard = () => {
+    const message = {
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Top 5"
+                }
+            },
+            {
+                "type": "divider"
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "<> 5"
+                }
+            }
+        ]
+    }
 }
