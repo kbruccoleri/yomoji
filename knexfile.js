@@ -9,9 +9,9 @@ module.exports = {
   staging: {
     client: 'postgresql',
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      database: 'yomoji_dev',
+      user:     '',
+      password: ''
     },
     pool: {
       min: 2,
