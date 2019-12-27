@@ -1,3 +1,4 @@
+const { orderBy } = require('lodash')
 const config = require('../knexfile')
 const knex = require('knex')(config.staging)
 
@@ -28,7 +29,7 @@ const UserEvent = {
       userCounts.push({ ...user, ...count })
     }
 
-    return userCounts
+    return orderBy(userCounts, 'count', 'desc')
   }
 
 }
