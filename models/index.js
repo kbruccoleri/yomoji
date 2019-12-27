@@ -1,42 +1,37 @@
-'use strict';
+const { orderBy } = require('lodash')
+const config = require('../knexfile')
+const knex = require('knex')(config.staging)
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
+const User = require('./user')(knex)
+const Event = require('./event')(knex)
 
-let sequelize;
-// if (config.use_env_variable) {
-//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   sequelize = new Sequelize(config.database, config.username, config.password, config);
-// }
+const UserEvent = {
+  async create({ to, from, type }) {
+    // todo: transaction
+    const { id: to_id } = await User.findOrCreate(to)
+    const { id: from_id } = await User.findOrCreate(from)
+    const { id: event_id } = await Event.findOrCreate(type)
 
-sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'db/database.sqlite'
-});
+    const userEvent = await knex('user_event').insert({
+      from_id,
+      to_id,
+      event_id,
+    })
+    return userEvent
+  },
+  async getLeaders() {
+    const users = await knex('user').select()
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(file => {
-    const model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
-  });
+    // use promisify.all
+    const userCounts = []
+    for (const user of users) {
+      const count  = await knex('user_event').where({ to_id: user.id }).count().first()
+      userCounts.push({ ...user, ...count })
+    }
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+    return orderBy(userCounts, 'count', 'desc')
   }
-});
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+}
 
-module.exports = db;
+module.exports = UserEvent;
