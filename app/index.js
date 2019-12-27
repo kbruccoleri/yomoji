@@ -20,8 +20,16 @@ app.post('/', async (req, res) => {
 
     // user mentions bot handle this
     if (event.type === 'app_mention') {
+        let botMessage = 'I am a bot'
+
+        if (event.text.includes('leaderboard')) {
+            botMessage = await createLeaderBoard()
+        }
+
+        const payloadType = Array.isArray(botMessage) ? 'blocks' : 'text'
+
         return postToSlack({
-            text: 'I am a bot',
+            [payloadType]: botMessage,
             channel: event.channel
         })
     }
@@ -29,7 +37,6 @@ app.post('/', async (req, res) => {
     if (event.type === 'message' && event.subtype !== 'bot_message') {
         // if edit, previous message event.message
         const { user } = event
-
 
         if (!event.text.includes(':taco:')) return
 
@@ -56,13 +63,10 @@ app.listen(8080, () => {
     console.log('Listening on 8080..')
 })
 
-const postToSlack = async ({
-    text,
-    channel,
-}) => {
+const postToSlack = async message => {
     const res = await fetch('https://slack.com/api/chat.postMessage', {
         method: 'post',
-        body: JSON.stringify({ channel, text }),
+        body: JSON.stringify(message),
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
             Authorization: `Bearer ${process.env.OAUTH_TOKEN}`
@@ -116,26 +120,28 @@ const checkUser = async user => {
     console.log('SLACK RESPONSE:', json)
 }
 
-const createLeaderBoard = () => {
-    const message = {
-        "blocks": [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Top 5"
-                }
-            },
-            {
-                "type": "divider"
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "<> 5"
-                }
+const createLeaderBoard = async () => {
+    const leaders = await UserEvent.getLeaders()
+
+    return [
+        {
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: "Top 5"
             }
-        ]
-    }
+        },
+        {
+            type: "divider"
+        },
+        ...leaders.map(userText)
+    ]
 }
+
+const userText = ({ user_name, count }) => ({
+    type: "section",
+    text: {
+        type: "mrkdwn",
+        text: `<@${user_name}> ${count} :taco:`
+    }
+})
