@@ -1,6 +1,6 @@
 const { orderBy } = require('lodash')
 const config = require('../knexfile')
-const knex = require('knex')(config.staging)
+const knex = require('knex')(config.development)
 
 const User = require('./user')(knex)
 const Event = require('./event')(knex)

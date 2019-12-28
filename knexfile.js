@@ -1,12 +1,5 @@
 module.exports = {
   development: {
-    client: 'sqlite3',
-    connection: {
-      filename: './db/database.sqlite3'
-    }
-  },
-
-  staging: {
     client: 'postgresql',
     connection: {
       database: 'yomoji_dev',

@@ -22,6 +22,12 @@ const User = knex => ({
 
     return val.count
   },
+  async decrement(user, amount = 1) {
+    const { id } = await this.findOrCreate(user)
+
+    await knex('user').where({ id }).decrement('limit', amount);
+  }
 })
 
 module.exports = User
+
