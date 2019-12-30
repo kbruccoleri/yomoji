@@ -1,10 +1,13 @@
+const { getUsersInfo } = require('../app/slack')
+
 const User = knex => ({
   async findOrCreate(username) {
     const userObject = { user_name: username }
     let [ user ] = await knex('user').where(userObject)
 
     if (!user) {
-      [ user ] = await knex('user').insert(userObject, ['id'])
+      const { user: { is_bot } } = await getUsersInfo(username)
+      ;[ user ] = await knex('user').insert({...userObject, is_bot }, ['id'])
     }
     return user
   },
@@ -39,4 +42,3 @@ const User = knex => ({
 })
 
 module.exports = User
-

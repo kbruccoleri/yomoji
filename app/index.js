@@ -21,7 +21,7 @@ app.post('/', async (req, res) => {
     }
 
     // user mentions bot handle this
-    if (event.type === 'app_mention') {
+    if (event.type === 'app_mention' && event.subtype !== 'bot_message') {
         let botMessage = 'I am a bot'
 
         if (event.text.includes('leaderboard')) {
@@ -48,7 +48,9 @@ app.post('/', async (req, res) => {
 
         const { recipient, count } = results
 
-        if (user === recipient) return
+        const { is_bot } = await User.findOrCreate(recipient)
+
+        if (user === recipient || is_bot) return
 
         const given = await giveTacos({ recipient, count, user })
 
