@@ -35,3 +35,4 @@ const UserEvent = {
 }
 
 module.exports = UserEvent;
+module.exports.User = User

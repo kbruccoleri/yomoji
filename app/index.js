@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 const fetch = require('node-fetch')
 const UserEvent = require('../models')
 
+const { User } = UserEvent
+
 const app = express()
 
 app.use(bodyParser.json())
@@ -46,14 +48,12 @@ app.post('/', async (req, res) => {
 
         const { recipient, count } = results
 
-        await UserEvent.create({
-            to: recipient,
-            from: user,
-            type: 'taco'
-        })
+        const given = await giveTacos({ recipient, count, user })
 
-        postToSlack({
-            text: `<@${user}> gave <@${recipient}> ${count}`,
+        if (!given) return
+
+        return postToSlack({
+            text: `<@${user}> gave <@${recipient}> ${given}`,
             channel: event.channel
         })
     }
@@ -100,6 +100,7 @@ const parseBlocks = ([ blocks ]) => {
         return memo
     }, {})
 
+    // Can only give tacos to one user in a message
     if (blockObj.user !== 1) return null
 
     return {
@@ -145,3 +146,25 @@ const userText = ({ user_name, count }) => ({
         text: `<@${user_name}> ${count} :taco:`
     }
 })
+
+const giveTacos = async ({ count, recipient, user }) => {
+    const limit = await User.getLimit(user)
+
+    if (!limit) return
+
+    const allowedCount = Math.min(limit, count)
+    const allowedArray = [...Array(allowedCount).keys()]
+
+    const userEventPromises = allowedArray.map(_ => (
+        UserEvent.create({
+            to: recipient,
+            from: user,
+            type: 'taco'
+        })
+    ))
+
+    await Promise.all(userEventPromises)
+    await User.decrement(user, allowedCount)
+
+    return allowedCount
+}

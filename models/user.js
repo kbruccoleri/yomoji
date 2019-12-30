@@ -22,7 +22,16 @@ const User = knex => ({
 
     return val.count
   },
+  async getLimit(user) {
+    const { id } = await this.findOrCreate(user)
+
+    const { limit } = await knex('user').select('limit').where({ id }).first()
+
+    return limit
+  },
   async decrement(user, amount = 1) {
+    if (amount < 0 || amount > 5) return
+
     const { id } = await this.findOrCreate(user)
 
     await knex('user').where({ id }).decrement('limit', amount);
