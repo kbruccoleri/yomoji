@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const fetch = require('node-fetch')
 const UserEvent = require('../models')
+const { postMessage } = require('./slack')
 
 const { User } = UserEvent
 
@@ -30,7 +30,7 @@ app.post('/', async (req, res) => {
 
         const payloadType = Array.isArray(botMessage) ? 'blocks' : 'text'
 
-        return postToSlack({
+        return postMessage({
             [payloadType]: botMessage,
             channel: event.channel
         })
@@ -48,11 +48,13 @@ app.post('/', async (req, res) => {
 
         const { recipient, count } = results
 
+        if (user === recipient) return
+
         const given = await giveTacos({ recipient, count, user })
 
         if (!given) return
 
-        return postToSlack({
+        return postMessage({
             text: `<@${user}> gave <@${recipient}> ${given}`,
             channel: event.channel
         })
@@ -62,21 +64,6 @@ app.post('/', async (req, res) => {
 app.listen(8080, () => {
     console.log('Listening on 8080..')
 })
-
-const postToSlack = async message => {
-    const res = await fetch('https://slack.com/api/chat.postMessage', {
-        method: 'post',
-        body: JSON.stringify(message),
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            Authorization: `Bearer ${process.env.OAUTH_TOKEN}`
-        },
-    })
-
-    const json = await res.json()
-
-    console.log('SLACK RESPONSE:', json)
-}
 
 const parseBlocks = ([ blocks ]) => {
     let nextblocks = blocks
@@ -107,18 +94,6 @@ const parseBlocks = ([ blocks ]) => {
         recipient,
         count: blockObj.emoji
     }
-}
-
-const checkUser = async user => {
-    const res = await fetch(`https://slack.com/api/users.info?user=${user}`, {
-        headers: {
-            Authorization: `Bearer ${process.env.BOT_TOKEN}`
-        },
-    })
-
-    const json = await res.json()
-
-    console.log('SLACK RESPONSE:', json)
 }
 
 const createLeaderBoard = async () => {
