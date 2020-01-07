@@ -3,6 +3,12 @@ const bodyParser = require('body-parser')
 const UserEvent = require('../models')
 const { postMessage } = require('./slack')
 
+const {
+    giveTacos,
+    createLeaderboard,
+    parseBlocks,
+} = require('./helpers')
+
 const { User } = UserEvent
 
 const app = express()
@@ -25,7 +31,7 @@ app.post('/', async (req, res) => {
         let botMessage = 'I am a bot'
 
         if (event.text.includes('leaderboard')) {
-            botMessage = await createLeaderBoard()
+            botMessage = await createLeaderboard()
         }
 
         const payloadType = Array.isArray(botMessage) ? 'blocks' : 'text'
@@ -63,85 +69,4 @@ app.post('/', async (req, res) => {
     }
 })
 
-app.listen(8080, () => {
-    console.log('Listening on 8080..')
-})
-
-const parseBlocks = ([ blocks ]) => {
-    let nextblocks = blocks
-    while (nextblocks.type !== 'rich_text_section') {
-        nextblocks = nextblocks.elements[0]
-    }
-
-    const { elements } = nextblocks
-    let recipient
-
-    const blockObj = elements.reduce((memo, curr) => {
-        const { type, user_id, name } = curr
-
-        if (type === 'user') {
-            memo.user = ++memo.user || 1
-            recipient = user_id
-        } else if (type === 'emoji' && name === 'taco') {
-            memo.emoji = ++memo.emoji || 1
-        }
-
-        return memo
-    }, {})
-
-    // Can only give tacos to one user in a message
-    if (blockObj.user !== 1) return null
-
-    return {
-        recipient,
-        count: blockObj.emoji
-    }
-}
-
-const createLeaderBoard = async () => {
-    const leaders = await UserEvent.getLeaders()
-
-    return [
-        {
-            type: "section",
-            text: {
-                type: "mrkdwn",
-                text: "Top 5"
-            }
-        },
-        {
-            type: "divider"
-        },
-        ...leaders.map(userText)
-    ]
-}
-
-const userText = ({ user_name, count }) => ({
-    type: "section",
-    text: {
-        type: "mrkdwn",
-        text: `<@${user_name}> ${count} :taco:`
-    }
-})
-
-const giveTacos = async ({ count, recipient, user }) => {
-    const limit = await User.getLimit(user)
-
-    if (!limit) return
-
-    const allowedCount = Math.min(limit, count)
-    const allowedArray = [...Array(allowedCount).keys()]
-
-    const userEventPromises = allowedArray.map(_ => (
-        UserEvent.create({
-            to: recipient,
-            from: user,
-            type: 'taco'
-        })
-    ))
-
-    await Promise.all(userEventPromises)
-    await User.decrement(user, allowedCount)
-
-    return allowedCount
-}
+module.exports = app

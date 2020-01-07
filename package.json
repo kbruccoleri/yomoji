@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node -r dotenv/config app/index",
-    "dev": "nodemon -r dotenv/config --inspect app/index",
+    "start": "nodemon -r dotenv/config --inspect index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
