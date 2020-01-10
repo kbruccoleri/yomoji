@@ -1,4 +1,4 @@
-const { getUsersInfo } = require('../app/slack')
+const { getUsersInfo } = require('../slack')
 
 const User = knex => ({
   async findOrCreate(username) {

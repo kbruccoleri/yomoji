@@ -1,4 +1,4 @@
-const UserEvent = require('../../models')
+const UserEvent = require('../models')
 const { User } = UserEvent
 
 const giveTacos = async ({ count, recipient, user }) => {

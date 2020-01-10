@@ -1,6 +1,8 @@
 const { orderBy } = require('lodash')
-const config = require('../knexfile')
-const knex = require('knex')(config.development)
+const config = require('../../knexfile')
+
+const ENV = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+const knex = require('knex')(config[ENV])
 
 const User = require('./user')(knex)
 const Event = require('./event')(knex)

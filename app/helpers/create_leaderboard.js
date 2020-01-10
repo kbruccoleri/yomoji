@@ -1,4 +1,4 @@
-const UserEvent = require('../../models')
+const UserEvent = require('../models')
 
 const createLeaderboard = async () => {
     const leaders = await UserEvent.getLeaders()
