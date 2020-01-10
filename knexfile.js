@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
   development: {
     client: 'postgresql',
@@ -18,9 +20,10 @@ module.exports = {
   production: {
     client: 'postgresql',
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      host: process.env.RDS_HOST,
+      database: process.env.RDS_DATABASE,
+      user:     process.env.RDS_USERNAME,
+      password: process.env.RDS_PASSWORD
     },
     pool: {
       min: 2,
