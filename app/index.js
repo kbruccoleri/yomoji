@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const UserEvent = require('../models')
+const UserEvent = require('./models')
 const { postMessage } = require('./slack')
 
 const {
