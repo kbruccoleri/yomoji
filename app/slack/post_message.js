@@ -6,7 +6,7 @@ const postMessage = async message => {
         body: JSON.stringify(message),
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
-            Authorization: `Bearer ${process.env.OAUTH_TOKEN}`
+            Authorization: `Bearer ${process.env.BOT_TOKEN}`
         },
     })
 
