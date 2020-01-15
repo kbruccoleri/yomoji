@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 const UserEvent = require('./models')
 const { postMessage } = require('./slack')
 
@@ -12,6 +13,9 @@ const {
 const { User } = UserEvent
 
 const app = express()
+
+const logger = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'
+app.use(morgan(logger))
 
 app.use(bodyParser.json())
 
@@ -31,7 +35,12 @@ app.post('/', async (req, res) => {
         let botMessage = 'I am a bot'
 
         if (event.text.includes('leaderboard')) {
-            botMessage = await createLeaderboard()
+            try {
+                botMessage = await createLeaderboard()
+            } catch (e) {
+                console.log('Error creating leaderboard: ', e)
+            }
+
         }
 
         const payloadType = Array.isArray(botMessage) ? 'blocks' : 'text'
@@ -39,7 +48,7 @@ app.post('/', async (req, res) => {
         return postMessage({
             [payloadType]: botMessage,
             channel: event.channel
-        })
+        }).catch(console.log)
     }
 
     if (event.type === 'message' && event.subtype !== 'bot_message') {
@@ -54,18 +63,26 @@ app.post('/', async (req, res) => {
 
         const { recipient, count } = results
 
-        const { is_bot } = await User.findOrCreate(recipient)
+        try {
+            var { is_bot } = await User.findOrCreate(recipient)
+        } catch (e) {
+            console.log(`Error finding or creating user ${recipient}: `, e)
+        }
 
         if (user === recipient || is_bot) return
 
-        const given = await giveTacos({ recipient, count, user })
+        try {
+            var given = await giveTacos({ recipient, count, user })
+        } catch (e) {
+            console.log(`Error giving taco user ${{ recipient, count, user }}: `, e)
+        }
 
         if (!given) return
 
         return postMessage({
             text: `<@${user}> gave <@${recipient}> ${given}`,
             channel: event.channel
-        })
+        }).catch(console.log)
     }
 })
 
