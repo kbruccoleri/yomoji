@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon -r dotenv/config --inspect index",
-    "prod": "forever start -o ./out.log -e ./err.log index.js",
+    "prod": "forever start index.js",
     "prod:stop": "forever stop index.js",
+    "prod:logs": "forever logs -f index.js",
+    "refill": "node -e 'require(\"./worker\").refillUsers()'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

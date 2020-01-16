@@ -10,6 +10,7 @@ const worker = () => ({
         } catch (e) {
             console.log('Error refilling users limit: ', e)
         }
+        knex.destroy()
     }
 })
 
