@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon -r dotenv/config --inspect index",
-    "prod": "forever start index.js",
+    "prod": "forever start index.js && forever start worker.js",
     "prod:stop": "forever stop index.js",
+    "prod:stop:worker": "forever stop worker.js",
     "prod:logs": "forever logs -f index.js",
-    "refill": "node -e 'require(\"./worker\").refillUsers()'",
+    "prod:logs:worker": "forever logs -f worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cron": "^1.7.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "forever": "^2.0.0",
