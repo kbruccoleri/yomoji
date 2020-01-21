@@ -37,7 +37,7 @@ app.post('/', async (req, res) => {
 
         if (event.text.includes('leaderboard')) {
             try {
-                botMessage = await createLeaderboard()
+                botMessage = 'TODO: PRs welcome - https://github.com/HeroProtagonist/yomoji' //await createLeaderboard()
             } catch (e) {
                 console.log('Error creating leaderboard: ', e)
             }
