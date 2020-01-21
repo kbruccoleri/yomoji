@@ -14,7 +14,7 @@ const worker = () => ({
         knex.destroy()
     },
     midnightReset() {
-        const job = new CronJob('00 00 00 * * *', async function() {
+        const job = new CronJob('00 00 00 * * *', async () => {
             console.log('Refill job started at: ', new Date())
             await this.refillUsers()
             console.log('Refill job finished at: ', new Date())
