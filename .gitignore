@@ -104,3 +104,6 @@ dist
 .tern-port
 
 db/*.sqlite*
+
+# JetBrains IDEs
+.idea/
