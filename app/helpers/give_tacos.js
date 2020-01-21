@@ -20,7 +20,10 @@ const giveTacos = async ({ count, recipient, user }) => {
     await Promise.all(userEventPromises)
     await User.decrement(user, allowedCount)
 
-    return allowedCount
+    return {
+        given: allowedCount,
+        limit,
+    }
 }
 
 module.exports = giveTacos

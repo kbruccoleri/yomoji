@@ -8,6 +8,7 @@ const {
     giveTacos,
     createLeaderboard,
     parseBlocks,
+    messageParticipents,
 } = require('./helpers')
 
 const { User } = UserEvent
@@ -47,7 +48,8 @@ app.post('/', async (req, res) => {
 
         return postMessage({
             [payloadType]: botMessage,
-            channel: event.channel
+            channel: event.channel,
+            link_names: false,
         }).catch(console.log)
     }
 
@@ -72,16 +74,23 @@ app.post('/', async (req, res) => {
         if (user === recipient || is_bot) return
 
         try {
-            var given = await giveTacos({ recipient, count, user })
+            var { given, limit } = await giveTacos({ recipient, count, user })
         } catch (e) {
             console.log(`Error giving taco user ${{ recipient, count, user }}: `, e)
         }
 
-        if (!given) return
+        if (!given) {
+            return postMessage({
+                text: "You are out of tacos for today",
+                channel: user
+            }).catch(console.log)
+        }
 
-        return postMessage({
-            text: `<@${user}> gave <@${recipient}> ${given}`,
-            channel: event.channel
+        return messageParticipents({
+            recipient,
+            limit,
+            given,
+            user,
         }).catch(console.log)
     }
 })
