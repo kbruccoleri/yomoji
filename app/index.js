@@ -74,7 +74,7 @@ app.post('/', async (req, res) => {
         if (user === recipient || is_bot) return
 
         try {
-            var { given, limit } = await giveTacos({ recipient, count, user })
+            var { given, remaining } = await giveTacos({ recipient, count, user })
         } catch (e) {
             console.log(`Error giving taco user ${{ recipient, count, user }}: `, e)
         }
@@ -88,7 +88,7 @@ app.post('/', async (req, res) => {
 
         return messageParticipents({
             recipient,
-            limit,
+            remaining,
             given,
             user,
         }).catch(console.log)
