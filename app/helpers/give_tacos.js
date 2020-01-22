@@ -2,6 +2,7 @@ const UserEvent = require('../models')
 const { User } = UserEvent
 
 const giveTacos = async ({ count, recipient, user }) => {
+    // TODO Wrap this in a transaction
     const limit = await User.getLimit(user)
 
     if (!limit) return
@@ -20,9 +21,11 @@ const giveTacos = async ({ count, recipient, user }) => {
     await Promise.all(userEventPromises)
     await User.decrement(user, allowedCount)
 
+    const remaining = limit - allowedCount
+
     return {
         given: allowedCount,
-        limit,
+        remaining,
     }
 }
 
