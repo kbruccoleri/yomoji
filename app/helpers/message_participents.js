@@ -14,9 +14,9 @@ const messageRecipient = ({ user, recipient, given }) => {
     })
 }
 
-const messageUser = ({ user, recipient, given, limit }) => {
+const messageUser = ({ user, recipient, given, remaining }) => {
     return postMessage({
-        text: `You gave <@${recipient}> ${given}. You have ${limit} left today`,
+        text: `You gave <@${recipient}> ${given}. You have ${remaining} left today`,
         channel: user
     })
 }
