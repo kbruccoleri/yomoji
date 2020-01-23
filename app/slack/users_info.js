@@ -6,10 +6,7 @@ const getUsersInfo = async user => {
             Authorization: `Bearer ${process.env.BOT_TOKEN}`
         },
     })
-
-    const userInfo = await res.json()
-
-    return userInfo
+    return await res.json()
 }
 
 module.exports = getUsersInfo

@@ -12,7 +12,7 @@
     "prod:logs:worker": "forever logs -f worker.js",
     "prod:restart": "forever restart index.js",
     "prod:restart:worker": "forever restart worker.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,8 @@
     "pg": "^7.14.0"
   },
   "devDependencies": {
+    "jest": "^24.9.0",
+    "mock-knex": "^0.4.7",
     "nodemon": "^2.0.2"
   }
 }
