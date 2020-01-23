@@ -10,6 +10,8 @@
     "prod:stop:worker": "forever stop worker.js",
     "prod:logs": "forever logs -f index.js",
     "prod:logs:worker": "forever logs -f worker.js",
+    "prod:restart": "forever restart index.js",
+    "prod:restart:worker": "forever restart worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
