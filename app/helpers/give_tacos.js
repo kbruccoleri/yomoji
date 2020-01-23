@@ -5,7 +5,7 @@ const giveTacos = async ({ count, recipient, user }) => {
     // TODO Wrap this in a transaction
     const limit = await User.getLimit(user)
 
-    if (!limit) return
+    if (!limit) return {}
 
     const allowedCount = Math.min(limit, count)
     const allowedArray = [...Array(allowedCount).keys()]
