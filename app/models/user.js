@@ -6,8 +6,8 @@ const User = knex => ({
     let [ user ] = await knex('user').where(userObject)
 
     if (!user) {
-      const { user: { is_bot } } = await getUsersInfo(username)
-      ;[ user ] = await knex('user').insert({...userObject, is_bot }, ['id'])
+      const { user: { is_bot } } = await getUsersInfo(username);
+      [ user ] = await knex('user').insert({...userObject, is_bot }, ['id'])
     }
     return user
   },
