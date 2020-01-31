@@ -10,7 +10,12 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
+      afterCreate: (conn, cb) => {
+        conn.query('SET timezone="UTC";', err => {
+          cb(err, conn);
+        });
+      }
     },
     migrations: {
       tableName: 'knex_migrations'
