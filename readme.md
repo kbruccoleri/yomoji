@@ -48,6 +48,7 @@ First, create a new Slack app [here](https://api.slack.com/apps?new_app=1).
 Go to the **OAuth & Permissions** section to determine what permissions your Bot User should have.
 In order for Yomoji to work, enable the following:
 
+#### Bot Token Scopes
 ```
  app_mentions:read
  View messages that directly mention @yomoji_test in conversations that the app is in
@@ -66,6 +67,12 @@ In order for Yomoji to work, enable the following:
  
  im:write
  Start direct messages with people
+```
+
+#### User Token Scopes
+```
+ identify
+ View information about the user’s identity
 ```
  
 

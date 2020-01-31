@@ -8,7 +8,7 @@ const {
     giveTacos,
     createLeaderboard,
     parseBlocks,
-    messageParticipents,
+    messageParticipants,
 } = require('./helpers')
 
 const { User } = UserEvent
@@ -86,7 +86,7 @@ app.post('/', async (req, res) => {
             }).catch(console.log)
         }
 
-        return messageParticipents({
+        return messageParticipants({
             recipient,
             remaining,
             given,

@@ -1,6 +1,6 @@
 const { postMessage } = require('../slack')
 
-const messageParticipents = (params) => {
+const messageParticipants = (params) => {
     return Promise.all([
         messageRecipient(params),
         messageUser(params),
@@ -21,4 +21,4 @@ const messageUser = ({ user, recipient, given, remaining }) => {
     })
 }
 
-module.exports = messageParticipents
+module.exports = messageParticipants
