@@ -1,3 +1,9 @@
+/* References for this migration:
+    https://github.com/knex/knex/issues/2391
+    https://github.com/knex/knex/issues/1928
+    https://stackoverflow.com/questions/57167350/how-to-set-updatedat-timestamp-in-knex-js-properly
+*/
+
 exports.up = function(knex) {
     return Promise.all([
         addTimeStamps('user', knex),
